@@ -83,7 +83,7 @@ def main():
                 )
                 rec_d = rec.__dict__.copy()
                 rec_d["category"] = label
-                writer.write(rec_d)
+                writer.append(rec_d)
                 per_cat[label] += 1
         print(f"  [{label}] {per_cat[label]}/{quota}"
               f"{' (archive exhausted)' if per_cat[label] < quota else ' done'}")

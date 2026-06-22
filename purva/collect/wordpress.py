@@ -82,6 +82,18 @@ class WordpressCollector(Collector):
         resp.encoding = resp.apparent_encoding or resp.encoding
         return resp.text
 
+    def _leaves_only(self, cats: list[str]) -> list[str]:
+        labels = {self.category_label(c): c for c in cats}
+        keep = []
+        for label, url in labels.items():
+            if label in ("uncategorized",):
+                continue
+            is_parent = any(other != label and other.startswith(label + "/")
+                            for other in labels)
+            if not is_parent:
+                keep.append(url)
+        return keep
+
     def discover_categories(self) -> list[str]:
         if self.category_paths:
             cats = [urljoin(self.base_url + "/", c.strip("/")) for c in self.category_paths]
@@ -102,8 +114,8 @@ class WordpressCollector(Collector):
             locs = [loc.get_text(strip=True) for loc in soup.find_all("loc")]
             cats = [u for u in locs if "/category/" in u]
             if cats:
-                found = list(dict.fromkeys(cats))
-                print(f"  [cats] discovered {len(found)} via {sm}")
+                found = self._leaves_only(list(dict.fromkeys(cats)))
+                print(f"  [cats] discovered {len(found)} leaf categories via {sm}")
                 return found
             nested = [u for u in locs if "category" in u and u.endswith(".xml")]
             for n in nested:
