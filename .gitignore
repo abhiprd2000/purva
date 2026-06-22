@@ -1,0 +1,20 @@
+# data 
+data/
+*.jsonl
+
+# secrets — API keys, configs with credentials
+config.yaml
+.env
+*.key
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/
