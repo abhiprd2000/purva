@@ -68,7 +68,7 @@ class GeminiJudge:
             except Exception as e:
                 msg = str(e).lower()
                 wait = min(2 ** attempt, 30)
-                if "rate" in msg or "429" in msg or "resource" in msg or "quota" in msg:
+                if any(k in msg for k in ("rate", "429", "resource", "quota", "503", "unavailable", "overloaded")):
                     print(f"  [gemini] rate limited, waiting {wait}s")
                     time.sleep(wait)
                     continue
